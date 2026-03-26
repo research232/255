@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>TANSCA | Tanzania Science Communication Association</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&family=Playfair+Display:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #ffffff;
+            color: #1a2a2a;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .top-bar {
+            background: #0a1f1a;
+            color: #e0e8dc;
+            font-size: 13px;
+            padding: 12px 0;
+        }
+
+        .top-bar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .top-date i {
+            margin-right: 8px;
+            color: #d4a373;
+        }
+
+        .top-links a {
+            color: #d4a373;
+            text-decoration: none;
+            margin-left: 28px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .top-links a:hover {
+            color: #f0bc8a;
+        }
+
+        .main-header {
+            background: white;
+            padding: 24px 0;
+            border-bottom: 1px solid #ecf3e8;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .logo img {
+            height: 60px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .logo-text h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 800;
+            color: #1e6b3e;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-text p {
+            font-size: 11px;
+            color: #7f9a73;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .search-area {
+            display: flex;
+            gap: 8px;
+        }
+
+        .search-area input {
+            padding: 12px 20px;
+            border: 1px solid #e2ecd9;
+            border-radius: 50px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            width: 280px;
+            background: #fefef9;
+            transition: all 0.2s;
+        }
+
+        .search-area input:focus {
+            outline: none;
+            border-color: #d4a373;
+            box-shadow: 0 0 0 3px rgba(212, 163, 115, 0.1);
+        }
+
+        .search-area button {
+            background: #d4a373;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 50px;
+            color: #1e2f1a;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .search-area button:hover {
+            background: #c28a5a;
+            transform: translateY(-1px);
+        }
+
+        .navbar {
+            background: #1e6b3e;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav-links a {
+            display: block;
+            padding: 18px 28px;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            transition: all 0.2s;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            background: #0f4a2a;
+            color: #f8e5c4;
+        }
+
+        .hero {
+            position: relative;
+            min-height: 500px;
+            background: linear-gradient(135deg, rgba(30, 107, 62, 0.85) 0%, rgba(15, 74, 42, 0.9) 100%);
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: white;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('banner.jpg');
+            background-size: cover;
+            background-position: center 30%;
+            background-repeat: no-repeat;
+            opacity: 0.4;
+            z-index: 0;
+        }
+
+        .hero .container {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+        }
+
+        .hero h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 52px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 15px rgba(0,0,0,0.2);
+        }
+
+        .hero p {
+            font-size: 20px;
+            max-width: 700px;
+            margin: 0 auto;
+            opacity: 0.95;
+            font-weight: 500;
+            text-shadow: 0 1px 8px rgba(0,0,0,0.15);
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 2.5fr 1fr;
+            gap: 56px;
+            margin: 64px 0;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .section-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: #1e6b3e;
+            position: relative;
+            padding-bottom: 12px;
+        }
+
+        .section-header h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: #d4a373;
+            border-radius: 3px;
+        }
+
+        .category-filters {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: #f5f8f2;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #4a6842;
+        }
+
+        .filter-btn.active, .filter-btn:hover {
+            background: #d4a373;
+            color: #1e2f1a;
+            transform: translateY(-2px);
+        }
+
+        .posts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+            gap: 32px;
+        }
+
+        .post-card {
+            background: white;
+            border-radius: 28px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            border: 1px solid #f0f5ea;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+
+        .post-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 30px 40px -20px rgba(0,0,0,0.2);
+            border-color: #e6efdf;
+        }
+
+        .post-image {
+            width: 100%;
+            height: 240px;
+            object-fit: cover;
+            background: #eef3e8;
+            transition: transform 0.5s ease;
+        }
+
+        .post-card:hover .post-image {
+            transform: scale(1.02);
+        }
+
+        .post-content {
+            padding: 28px;
+        }
+
+        .post-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .post-category {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            padding: 5px 16px;
+            border-radius: 40px;
+        }
+
+        .category-news { background: #e8f0fe; color: #2c5aa6; }
+        .category-research { background: #e4f4e4; color: #2d6a4f; }
+        .category-event { background: #fff0e0; color: #bc6c25; }
+        .category-announcement { background: #fbe9f0; color: #b83b5e; }
+
+        .post-date {
+            font-size: 12px;
+            color: #9ab18e;
+            font-weight: 500;
+        }
+
+        .post-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 14px;
+            font-family: 'Playfair Display', serif;
+            line-height: 1.35;
+        }
+
+        .post-title a {
+            color: #1e2f2a;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .post-title a:hover {
+            color: #d4a373;
+        }
+
+        .post-excerpt {
+            font-size: 15px;
+            color: #557a4b;
+            line-height: 1.65;
+            margin-bottom: 20px;
+        }
+
+        .read-more {
+            color: #d4a373;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: gap 0.2s;
+            cursor: pointer;
+        }
+
+        .read-more:hover {
+            gap: 12px;
+            color: #b87a4a;
+        }
+
+        .sidebar {
+            position: sticky;
+            top: 100px;
+        }
+
+        .widget {
+            background: #fefefb;
+            border-radius: 28px;
+            padding: 28px;
+            margin-bottom: 36px;
+            border: 1px solid #edf4e7;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.02);
+            transition: box-shadow 0.2s;
+        }
+
+        .widget:hover {
+            box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+        }
+
+        .widget h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: #1e6b3e;
+            border-bottom: 2px solid #efe5d6;
+            padding-bottom: 14px;
+            margin-bottom: 22px;
+        }
+
+        .widget h3 i {
+            color: #d4a373;
+            margin-right: 10px;
+        }
+
+        .widget ul {
+            list-style: none;
+        }
+
+        .widget li {
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f5eb;
+            font-weight: 500;
+        }
+
+        .placeholder-text {
+            color: #bfd4b5;
+            font-weight: 400;
+        }
+
+        .empty-posts {
+            background: #fefef8;
+            border: 1px dashed #deecd2;
+            border-radius: 32px;
+            padding: 80px 32px;
+            text-align: center;
+            color: #a5c19a;
+            grid-column: 1 / -1;
+        }
+
+        .footer {
+            background: #0a1f1a;
+            color: #cbdfc2;
+            padding: 64px 0 32px;
+            margin-top: 80px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 56px;
+            margin-bottom: 48px;
+        }
+
+        .footer h4 {
+            font-family: 'Playfair Display', serif;
+            font-size: 19px;
+            margin-bottom: 20px;
+            color: #f3efdd;
+        }
+
+        .footer a {
+            color: #c2dcb6;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer a:hover {
+            color: #d4a373;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 32px;
+            border-top: 1px solid #2a4a34;
+            font-size: 13px;
+        }
+
+        .post-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .post-modal-content {
+            max-width: 900px;
+            margin: 60px auto;
+            background: white;
+            border-radius: 40px;
+            padding: 40px;
+        }
+
+        .post-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+        }
+
+        .close-modal {
+            font-size: 36px;
+            cursor: pointer;
+            color: #999;
+            transition: color 0.2s;
+        }
+
+        .close-modal:hover {
+            color: #d4a373;
+        }
+
+        .modal-image {
+            width: 100%;
+            max-height: 420px;
+            object-fit: cover;
+            border-radius: 28px;
+            margin-bottom: 28px;
+        }
+
+        .view-count {
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid #ecf3e8;
+            font-size: 13px;
+            color: #8aa884;
+        }
+
+        @media (max-width: 900px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            .posts-grid {
+                grid-template-columns: 1fr;
+            }
+            .hero h2 {
+                font-size: 34px;
+            }
+            .hero p {
+                font-size: 16px;
+            }
+            .hero {
+                min-height: 380px;
+            }
+            .logo img {
+                height: 50px;
+            }
+            .logo-text h1 {
+                font-size: 22px;
+            }
+            .search-area input {
+                width: 200px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 0 20px;
+            }
+            .header-content {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            .logo {
+                flex-direction: column;
+                text-align: center;
+            }
+            .search-area {
+                width: 100%;
+            }
+            .search-area input {
+                flex: 1;
+            }
+            .hero h2 {
+                font-size: 28px;
+            }
+            .post-title {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <div class="container">
+            <div class="top-date"><i class="far fa-calendar-alt"></i> <span id="currentDate"></span></div>
+            <div class="top-links">
+                <a href="admin.html"><i class="fas fa-user-shield"></i> Paneli ya Wasimamizi</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <img src="logo.png" alt="TANSCA Logo" onerror="this.style.display='none';">
+                    <div class="logo-text">
+                        <h1>TANSCA</h1>
+                        <p>Tanzania Science Communication Association</p>
+                    </div>
+                </div>
+                <div class="search-area">
+                    <input type="text" id="searchInput" placeholder="Tafuta taarifa...">
+                    <button onclick="filterPosts()"><i class="fas fa-search"></i> Tafuta</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <nav class="navbar">
+        <div class="container">
+            <ul class="nav-links">
+                <li><a class="active" data-filter="all">Nyumbani</a></li>
+                <li><a data-filter="Utafiti">Tafiti</a></li>
+                <li><a data-filter="Habari">Habari</a></li>
+                <li><a data-filter="Tukio">Matukio</a></li>
+                <li><a data-filter="Tangazo">Matangazo</a></li>
+                <li><a>Kuhusu</a></li>
+                <li><a>Mawasiliano</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="hero">
+        <div class="container">
+            <h2>Kueneza Sayansi kwa Watanzania Wote</h2>
+            <p>TANSCA inaunganisha wanasayansi, watafiti, na wapenda sayansi katika kueneza elimu na taarifa za kisayansi kwa jamii.</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="main-layout">
+            <div>
+                <div class="section-header">
+                    <h2>Taarifa za Hivi Karibuni</h2>
+                    <div class="category-filters" id="categoryFilters">
+                        <button class="filter-btn active" data-filter="all">Zote</button>
+                        <button class="filter-btn" data-filter="Habari">Habari</button>
+                        <button class="filter-btn" data-filter="Utafiti">Tafiti</button>
+                        <button class="filter-btn" data-filter="Tukio">Matukio</button>
+                        <button class="filter-btn" data-filter="Tangazo">Matangazo</button>
+                    </div>
+                </div>
+                <div id="postsContainer" class="posts-grid">
+                    <div class="empty-posts">Loading taarifa...</div>
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <div class="widget">
+                    <h3><i class="fas fa-users"></i> Uongozi Wetu</h3>
+                    <ul>
+                        <li><span class="placeholder-text">Mwenyekiti</span></li>
+                        <li><span class="placeholder-text">Makamu Mwenyekiti</span></li>
+                        <li><span class="placeholder-text">Katibu Mkuu</span></li>
+                        <li><span class="placeholder-text">Mweka Hazina</span></li>
+                    </ul>
+                </div>
+
+                <div class="widget">
+                    <h3><i class="fas fa-bullhorn"></i> Matangazo</h3>
+                    <ul id="announcementsList">
+                        <li><span class="placeholder-text">Loading...</span></li>
+                    </ul>
+                </div>
+
+                <div class="widget">
+                    <h3><i class="fas fa-handshake"></i> Taasisi Washirika</h3>
+                    <ul>
+                        <li>COSTECH</li>
+                        <li>UDSM</li>
+                        <li>SUA</li>
+                        <li>NIMR</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <h4>TANSCA</h4>
+                    <p>Tanzania Science Communication Association</p>
+                    <p style="margin-top: 12px;">Kueneza sayansi kwa wote</p>
+                </div>
+                <div>
+                    <h4>Anwani</h4>
+                    <p><i class="fas fa-map-marker-alt"></i> Dar es Salaam, Tanzania</p>
+                    <p><i class="fas fa-envelope"></i> info@tansca.or.tz</p>
+                    <p><i class="fas fa-phone"></i> +255 765 432 100</p>
+                </div>
+                <div>
+                    <h4>Mawasiliano</h4>
+                    <p><a href="admin.html"><i class="fas fa-user-shield"></i> Paneli ya Wasimamizi</a></p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 TANSCA - Tanzania Science Communication Association. Haki zote zimehifadhiwa.</p>
+            </div>
+        </div>
+    </footer>
+
+    <div id="postModal" class="post-modal">
+        <div class="post-modal-content">
+            <div class="post-modal-header">
+                <h2 id="modalTitle"></h2>
+                <span class="close-modal" onclick="closePostModal()">&times;</span>
+            </div>
+            <img id="modalImage" class="modal-image" src="" alt="">
+            <div id="modalCategory" style="margin-bottom: 16px;"></div>
+            <div id="modalDate" style="margin-bottom: 16px; color:#8aa884; font-size:13px;"></div>
+            <div id="modalContent" style="line-height: 1.8; color: #2a3a2a;"></div>
+            <div id="modalViews" class="view-count"></div>
+        </div>
+    </div>
+
+    <script>
+        // Supabase Configuration
+        const SUPABASE_URL = 'https://khrddmxcnenvkfypakfa.supabase.co';
+        const SUPABASE_KEY = 'sb_publishable_aYrzOYt1BFRW1ThGVqsZMw_tr_rg0BQ';
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let currentFilter = 'all';
+        let currentSearchTerm = '';
+
+        async function loadPosts() {
+            let query = supabase.from('posts').select('*').order('created_at', { ascending: false });
+            
+            const { data, error } = await query;
+            
+            if (error) {
+                console.error('Error loading posts:', error);
+                document.getElementById('postsContainer').innerHTML = '<div class="empty-posts">Error loading taarifa. Tafadhali jaribu tena.</div>';
+                return;
+            }
+            
+            let posts = data || [];
+            
+            if (currentFilter !== 'all') {
+                posts = posts.filter(p => p.category === currentFilter);
+            }
+            
+            if (currentSearchTerm) {
+                posts = posts.filter(p => 
+                    p.title.toLowerCase().includes(currentSearchTerm.toLowerCase()) || 
+                    p.content.toLowerCase().includes(currentSearchTerm.toLowerCase())
+                );
+            }
+            
+            const container = document.getElementById('postsContainer');
+            
+            if (posts.length === 0) {
+                container.innerHTML = '<div class="empty-posts"><i class="fas fa-newspaper" style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;"></i><br>Hakuna taarifa zinazolingana na chaguo lako.</div>';
+                return;
+            }
+            
+            container.innerHTML = posts.map(post => {
+                let categoryClass = '';
+                if (post.category === 'Habari') categoryClass = 'category-news';
+                else if (post.category === 'Utafiti') categoryClass = 'category-research';
+                else if (post.category === 'Tukio') categoryClass = 'category-event';
+                else categoryClass = 'category-announcement';
+                
+                let categoryIcon = '';
+                if (post.category === 'Habari') categoryIcon = '📰';
+                else if (post.category === 'Utafiti') categoryIcon = '🔬';
+                else if (post.category === 'Tukio') categoryIcon = '📅';
+                else categoryIcon = '📢';
+                
+                return `
+                    <div class="post-card">
+                        <img src="${post.image || 'https://placehold.co/600x400/e8f0e2/4a784a?text=TANSCA'}" class="post-image" alt="${escapeHtml(post.title)}" onerror="this.src='https://placehold.co/600x400/e8f0e2/4a784a?text=TANSCA'">
+                        <div class="post-content">
+                            <div class="post-meta">
+                                <span class="post-category ${categoryClass}">${categoryIcon} ${post.category || 'Taarifa'}</span>
+                                <span class="post-date"><i class="far fa-calendar-alt"></i> ${post.date || 'Tarehe haijabainishwa'}</span>
+                            </div>
+                            <h3 class="post-title">${escapeHtml(post.title)}</h3>
+                            <p class="post-excerpt">${escapeHtml(post.content.substring(0, 140))}${post.content.length > 140 ? '...' : ''}</p>
+                            <span class="read-more" onclick="viewPost(${post.id})">Soma zaidi <i class="fas fa-arrow-right"></i></span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function viewPost(id) {
+            const { data: post, error } = await supabase.from('posts').select('*').eq('id', id).single();
+            
+            if (error || !post) {
+                console.error('Error loading post:', error);
+                return;
+            }
+            
+            // Increment views
+            const newViews = (post.views || 0) + 1;
+            await supabase.from('posts').update({ views: newViews }).eq('id', id);
+            
+            let categoryClass = '';
+            if (post.category === 'Habari') categoryClass = 'category-news';
+            else if (post.category === 'Utafiti') categoryClass = 'category-research';
+            else if (post.category === 'Tukio') categoryClass = 'category-event';
+            else categoryClass = 'category-announcement';
+            
+            document.getElementById('modalTitle').textContent = post.title;
+            document.getElementById('modalImage').src = post.image || 'https://placehold.co/800x400/e8f0e2/4a784a?text=TANSCA';
+            document.getElementById('modalCategory').innerHTML = `<span class="post-category ${categoryClass}">${post.category || 'Taarifa'}</span>`;
+            document.getElementById('modalDate').innerHTML = `<i class="far fa-calendar-alt"></i> ${post.date || 'Tarehe haijabainishwa'}`;
+            document.getElementById('modalContent').innerHTML = post.content.replace(/\n/g, '<br>');
+            document.getElementById('modalViews').innerHTML = `<i class="fas fa-eye"></i> Imetazamwa ${newViews} mara`;
+            document.getElementById('postModal').style.display = 'block';
+        }
+
+        async function loadAnnouncements() {
+            const { data, error } = await supabase.from('posts').select('id, title').eq('category', 'Tangazo').limit(5);
+            
+            const container = document.getElementById('announcementsList');
+            if (error || !data || data.length === 0) {
+                container.innerHTML = '<li><span class="placeholder-text">Hakuna matangazo kwa sasa</span></li>';
+                return;
+            }
+            
+            container.innerHTML = data.map(a => `<li><a href="#" onclick="viewPost(${a.id}); return false;" style="color:#1e6b3e; text-decoration:none;">📢 ${escapeHtml(a.title.substring(0, 50))}</a></li>`).join('');
+        }
+
+        function filterPosts() {
+            currentSearchTerm = document.getElementById('searchInput').value;
+            loadPosts();
+        }
+
+        function setFilter(category) {
+            currentFilter = category;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if (btn.dataset.filter === category) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                if (link.dataset.filter === category || (category === 'all' && !link.dataset.filter)) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+            loadPosts();
+        }
+
+        function closePostModal() {
+            document.getElementById('postModal').style.display = 'none';
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        function setCurrentDate() {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('currentDate').textContent = new Date().toLocaleDateString('sw-TZ', options);
+        }
+
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => setFilter(btn.dataset.filter));
+        });
+        
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            if (link.dataset.filter) {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    setFilter(link.dataset.filter);
+                });
+            }
+        });
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('postModal');
+            if (event.target === modal) {
+                closePostModal();
+            }
+        };
+
+        setCurrentDate();
+        loadPosts();
+        loadAnnouncements();
+    </script>
+</body>
+</html>
