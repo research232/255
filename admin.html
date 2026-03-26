@@ -46,11 +46,27 @@
 </div>
 
 <script>
+    // Supabase Configuration - VERIFIED
     const SUPABASE_URL = 'https://khrddmxcnenvkfypakfa.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_aYrzOYt1BFRW1ThGVqsZMw_tr_rg0BQ';
+    
+    console.log('Supabase URL:', SUPABASE_URL);
+    console.log('Supabase Key:', SUPABASE_KEY);
+    
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     
     let currentImageData = null;
+
+    async function testConnection() {
+        console.log('Testing Supabase connection...');
+        const { data, error } = await supabaseClient.from('posts').select('count');
+        if (error) {
+            console.error('Connection error:', error);
+            document.getElementById('msg').innerHTML = `<span class="error">Connection error: ${error.message}</span>`;
+        } else {
+            console.log('Connection OK!');
+        }
+    }
 
     function login() {
         const user = document.getElementById('username').value;
@@ -60,6 +76,7 @@
             document.getElementById('loginBox').style.display = 'none';
             document.getElementById('dashboard').style.display = 'block';
             loadPosts();
+            testConnection();
         } else {
             document.getElementById('loginError').innerText = 'Username au password si sahihi!';
         }
@@ -93,10 +110,14 @@
             views: 0
         };
         
-        const { error } = await supabaseClient.from('posts').insert([newPost]);
+        console.log('Inserting post:', newPost);
+        
+        const { data, error } = await supabaseClient.from('posts').insert([newPost]).select();
         if (error) {
+            console.error('Insert error:', error);
             document.getElementById('msg').innerHTML = `<span class="error">Error: ${error.message}</span>`;
         } else {
+            console.log('Insert success:', data);
             document.getElementById('msg').innerHTML = '<span class="success">Taarifa imeongezwa!</span>';
             document.getElementById('title').value = '';
             document.getElementById('content').value = '';
@@ -108,10 +129,14 @@
 
     async function loadPosts() {
         const { data, error } = await supabaseClient.from('posts').select('*').order('created_at', { ascending: false });
-        if (error) { document.getElementById('postsList').innerHTML = `<p class="error">Error: ${error.message}</p>`; return; }
+        if (error) { 
+            console.error('Load error:', error);
+            document.getElementById('postsList').innerHTML = `<p class="error">Error: ${error.message}</p>`; 
+            return; 
+        }
         if (!data || data.length === 0) { document.getElementById('postsList').innerHTML = '<p>Hakuna taarifa</p>'; return; }
         
-        let html = '<table><tr><th>Kichwa</th><th>Aina</th><th>Tarehe</th><th>Views</th><th>Kitendo</th></tr>';
+        let html = ' <table> <tr><th>Kichwa</th><th>Aina</th><th>Tarehe</th><th>Views</th><th>Kitendo</th></tr>';
         data.forEach(post => {
             html += `<tr>
                 <td>${post.title.substring(0, 30)}</td>
@@ -132,10 +157,12 @@
         }
     }
 
+    // Check if already logged in
     if (sessionStorage.getItem('admin_logged_in') === 'true') {
         document.getElementById('loginBox').style.display = 'none';
         document.getElementById('dashboard').style.display = 'block';
         loadPosts();
+        testConnection();
     }
 </script>
 </body>
